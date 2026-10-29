@@ -13,13 +13,38 @@
         height: 100%;
       }
       #app {
+        display: flex;
         width: 100%;
         height: 100%;
+      }
+      /* 编辑器 UI 默认隐藏（此规则必须放这里：editor.css 仅编辑模式加载） */
+      #parts-panel,
+      #toolbar {
+        display: none;
       }
     </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- 零件面板：仅编辑模式（?edit=1）显示 -->
+      <aside id="parts-panel">
+        <div class="panel-title">零件库</div>
+        <div id="parts-list"></div>
+        <div class="panel-hint">模型文件放入 src/models/kit/ 后自动出现在这里</div>
+      </aside>
+      <!-- 3D 视口 -->
+      <div id="viewport">
+        <div id="toolbar">
+          <button id="btn-import" type="button">导入场景</button>
+          <button id="btn-export" type="button">导出 JSON</button>
+          <span class="sep"></span>
+          <button id="btn-undo" type="button" disabled>撤销</button>
+          <button id="btn-redo" type="button" disabled>重做</button>
+          <span class="sep"></span>
+          <span class="kbd-hint">点击放置/选中 · 方向键移动 · R 旋转 · Del 删除 · Ctrl+Z 撤销 · Esc 取消选中</span>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

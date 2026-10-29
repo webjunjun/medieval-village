@@ -7,21 +7,22 @@ scene.background = new THREE.Color(0x87b5d8); // 天空色
 scene.fog = new THREE.Fog(0x87b5d8, 60, 180);
 
 // ---------- 相机 ----------
+const viewport = document.getElementById('viewport');
 const camera = new THREE.PerspectiveCamera(
   60,
-  window.innerWidth / window.innerHeight,
+  viewport.clientWidth / viewport.clientHeight,
   0.1,
   1000
 );
 camera.position.set(20, 15, 25);
 
-// ---------- 渲染器 ----------
+// ---------- 渲染器（挂载到视口，编辑模式下视口左侧会让出零件面板） ----------
 const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(viewport.clientWidth, viewport.clientHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-document.getElementById('app').appendChild(renderer.domElement);
+viewport.appendChild(renderer.domElement);
 
 // ---------- 控制器 ----------
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -83,9 +84,9 @@ addHouse(-3, 5);
 
 // ---------- 窗口自适应 ----------
 window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.aspect = viewport.clientWidth / viewport.clientHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(viewport.clientWidth, viewport.clientHeight);
 });
 
 // ---------- 渲染循环 ----------
@@ -93,3 +94,11 @@ renderer.setAnimationLoop(() => {
   controls.update();
   renderer.render(scene, camera);
 });
+
+// ---------- 编辑模式入口：URL 带 ?edit=1 时加载编辑器 ----------
+if (new URLSearchParams(location.search).get('edit') !== null) {
+  import('./editor/editor.js').then((m) => m.initEditor());
+}
+
+// 供编辑器模块使用
+export { scene, camera, renderer, controls, ground };
